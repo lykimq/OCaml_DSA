@@ -9,7 +9,7 @@ This document presents benchmark results comparing five search algorithms across
 - Fibonacci Search
 
 ## Benchmark Configuration
-- **Environment**: Performance measured using `perf stat`, and [`benchmark` library](https://github.com/Chris00/ocaml-benchmark)
+- **Environment**: Performance measured using `perf stat`, and [`benchmark`](https://github.com/Chris00/ocaml-benchmark) library.
 
 - **Runtime**: Each algorithm runs for minimum 3 CPU seconds
 - **List Sizes**:
