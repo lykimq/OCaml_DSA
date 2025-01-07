@@ -5,6 +5,7 @@ open Alcotest
    seeding *)
 let () = Mirage_crypto_rng_unix.initialize (module Mirage_crypto_rng.Fortuna)
 
+(* Test that key generation produces valid key pairs *)
 let test_generate_keys () =
   let private_key, public_key = DigitalSignatureVerifier.generate_keys () in
   check (option pass) "private key is generated" (Some private_key)
@@ -12,6 +13,7 @@ let test_generate_keys () =
   check (option pass) "public key is generated" (Some public_key)
     (Some public_key)
 
+(* Test that document hashing produces the correct SHA3-256 hash length (32 bytes) *)
 let test_hash_document () =
   let document = "Hello, world!" in
   let expected_hash = DigitalSignatureVerifier.hash_document document in
@@ -19,6 +21,7 @@ let test_hash_document () =
     (expected_hash |> String.length |> string_of_int)
     "32" (* SHA3_256 hash length *)
 
+(* Test that document signing works with a valid private key *)
 let test_sign_document () =
   let private_key, _ = DigitalSignatureVerifier.generate_keys () in
   let document = "Hello, world!" in
@@ -27,6 +30,7 @@ let test_sign_document () =
   in
   check (option pass) "signature is generated" (Some signature) (Some signature)
 
+(* Test that signature verification works with matching document and key pair *)
 let test_verify_signature () =
   let private_key, public_key = DigitalSignatureVerifier.generate_keys () in
   let document = "Hello, world!" in
@@ -38,6 +42,7 @@ let test_verify_signature () =
   in
   check bool "signature is valid" true result
 
+(* Test that signature verification fails when the document is modified *)
 let test_tampered_document () =
   let private_key, public_key = DigitalSignatureVerifier.generate_keys () in
   let document = "Hello, world!" in
@@ -51,6 +56,7 @@ let test_tampered_document () =
   in
   check bool "signature is invalid for tampered document" false result
 
+(* Test that signature verification fails when using the wrong public key *)
 let test_invalid_public_key () =
   let private_key, _public_key = DigitalSignatureVerifier.generate_keys () in
   let _, wrong_public_key = DigitalSignatureVerifier.generate_keys () in

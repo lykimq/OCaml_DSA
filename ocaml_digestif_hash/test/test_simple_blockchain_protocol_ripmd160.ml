@@ -1,7 +1,10 @@
 open Ocaml_digestif_hash.Simple_blockchain_protocol_ripemd160
 open Alcotest
 
-(* Test 1: Create a genesis block and check its initial properties *)
+(** Test 1: Verifies the creation and properties of the genesis block
+    - Checks if index is 0
+    - Verifies previous hash is "0"
+    - Ensures hash is generated (non-empty) *)
 let test_genesis_block () =
   let genesis_block = Blockchain.create_genesis_block () in
   check int "Genesis block index should be 0" 0 genesis_block.index;
@@ -10,6 +13,9 @@ let test_genesis_block () =
   check bool "Genesis block hash should not be empty" true
     (String.length genesis_block.hash > 0)
 
+(** Test 2: Validates block addition functionality
+    - Ensures new block's index increments correctly
+    - Verifies the previous hash links to genesis block *)
 let test_add_block () =
   let genesis_block = Blockchain.create_genesis_block () in
   let new_block = Blockchain.add_block genesis_block "Block 1 data" in
@@ -17,7 +23,8 @@ let test_add_block () =
   check string "New block's previous hash should match genesis block's hash"
     genesis_block.hash new_block.previous_hash
 
-(* Utility function to print block details *)
+(** Utility function to print a single block's details for debugging
+    @param block The block to print *)
 let print_block block =
   Printf.printf "Block #%d\n" block.index;
   Printf.printf "Previous Hash: %s\n" block.previous_hash;
@@ -26,9 +33,14 @@ let print_block block =
   Printf.printf "Hash: %s\n" block.hash;
   Printf.printf "------------------------------------\n"
 
-(* Print the entire blockchain *)
+(** Utility function to print all blocks in the blockchain
+    @param blockchain List of blocks to print *)
 let print_blockchain blockchain = List.iter print_block blockchain
 
+(** Test 3: Validates a legitimate blockchain
+    - Creates a chain of 3 blocks
+    - Adds artificial delays between blocks
+    - Verifies the entire chain integrity *)
 let test_valid_blockchain () =
   let genesis_block = Blockchain.create_genesis_block () in
   Unix.sleep 1;
@@ -43,6 +55,11 @@ let test_valid_blockchain () =
   check bool "Blockchain should be valid" true
     (Blockchain.verify_chain blockchain)
 
+(** Test 4: Validates tamper detection in the blockchain
+    - Creates a valid chain
+    - Deliberately modifies block data
+    - Verifies that tampering is detected
+    - Tests the chain verification mechanism *)
 let test_tempered_blockchain () =
   let genesis_block = Blockchain.create_genesis_block () in
   (* Simulate time difference for realistic timestamps *)
@@ -90,6 +107,7 @@ let test_tempered_blockchain () =
   Alcotest.check Alcotest.bool "Tempered blockchain should be invalid" false
     (Blockchain.verify_chain blockchain)
 
+(** Groups all blockchain tests into a test suite *)
 let blockchain_tests () =
   [
     test_case "Create genesis block" `Quick test_genesis_block;

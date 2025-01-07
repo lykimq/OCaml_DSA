@@ -1,16 +1,30 @@
 open Ocaml_digestif_hash.File_integrity_sha256
 open Alcotest
 
+(* Helper functions *)
+
+(* Creates a new file with the given filename and content
+   @param filename The name of the file to create
+   @param content The content to write to the file *)
 let create_test_file filename content =
   let oc = open_out filename in
   output_string oc content;
   close_out oc
 
+(* Modifies an existing file with new content
+   @param filename The name of the file to modify
+   @param new_content The new content to write to the file *)
 let modify_test_file filename new_content =
   create_test_file filename new_content
 
+(* Safely removes a file if it exists
+   @param filename The name of the file to remove *)
 let remove_file filename = try Sys.remove filename with Sys_error _ -> ()
 
+(* Test Cases *)
+
+(* Tests that file integrity verification passes when the file hasn't been modified
+   Creates a file, generates its hash, saves it, and verifies the integrity *)
 let test_file_integrity_verified () =
   let file_to_check = "test_file.txt" in
   let hash_store_file = "test_hash.txt" in
@@ -29,6 +43,8 @@ let test_file_integrity_verified () =
   remove_file file_to_check;
   remove_file hash_store_file
 
+(* Tests that file integrity verification fails when the file has been modified
+   Creates a file, generates its hash, modifies the file, and verifies the integrity *)
 let test_file_integrity_failed () =
   (* Prepare test file *)
   let file_to_check = "test_file.txt" in
@@ -50,6 +66,8 @@ let test_file_integrity_failed () =
   remove_file file_to_check;
   remove_file hash_store_file
 
+(* Tests that attempting to verify a non-existent file raises the appropriate error
+   Attempts to verify integrity of a file that doesn't exist *)
 let test_file_not_found () =
   (* Test with a missing file *)
   let file_to_check = "non_existent_file.txt" in
@@ -68,6 +86,9 @@ let test_file_not_found () =
   remove_file file_to_check;
   remove_file hash_store_file
 
+(* Tests that hash computation and storage works correctly
+   Creates a file, computes its hash, stores it, and verifies the stored hash matches
+   a fresh computation *)
 let test_correct_hash_computation () =
   (* Prepare test file *)
   let file_to_check = "test_file.txt" in
@@ -90,6 +111,8 @@ let test_correct_hash_computation () =
   remove_file file_to_check;
   remove_file hash_store_file
 
+(* Main test runner
+   Registers and runs all test cases *)
 let () =
   run "File Integrity Checker Tests"
     [

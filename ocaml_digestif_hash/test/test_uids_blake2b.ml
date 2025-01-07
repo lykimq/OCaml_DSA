@@ -1,17 +1,20 @@
 open Ocaml_digestif_hash.Uids_blake2b
 open Alcotest
 
+(** Tests that a UID is generated and is non-empty for a given input *)
 let test_generate_uid () =
   let data = "user@example.com" in
   let uid = UniqueIdentifier.generate_uid data in
   check bool "UID should not be empty" true (String.length uid > 0)
 
+(** Verifies that generating UIDs for the same input produces consistent results *)
 let test_consistent_uid_generation () =
   let data = "user@example.com" in
   let uid1 = UniqueIdentifier.generate_uid data in
   let uid2 = UniqueIdentifier.generate_uid data in
   check string "Hashing the same data twice should give the same UID" uid1 uid2
 
+(** Ensures that different input data produces different UIDs *)
 let test_different_data_different_uids () =
   let data1 = "user@example.com" in
   let data2 = "file1.txt: 10KB, created 2024-09-20" in
@@ -20,12 +23,14 @@ let test_different_data_different_uids () =
   check bool "Different data should generate different UIDs" false
     (String.equal uid1 uid2)
 
+(** Tests that a UID can be verified against its original input data *)
 let test_verify_correct_uid () =
   let data = "user@example.com" in
   let uid = UniqueIdentifier.generate_uid data in
   let result = UniqueIdentifier.verify_uid data uid in
   check bool "Correct data-UID pair should verify successfully" true result
 
+(** Verifies that UIDs fail verification when checked against incorrect data *)
 let test_verify_incorrect_uid () =
   let data = "user@example.com" in
   let uid = UniqueIdentifier.generate_uid data in
@@ -33,6 +38,7 @@ let test_verify_incorrect_uid () =
   let result = UniqueIdentifier.verify_uid wrong_data uid in
   check bool "Incorrect data-UID pair should fail verification" false result
 
+(** Tests UID generation and verification with empty input data *)
 let test_empty_data_uid () =
   let empty_data = "" in
   let uid = UniqueIdentifier.generate_uid empty_data in
@@ -42,6 +48,7 @@ let test_empty_data_uid () =
   check bool "Empty data should verify successfully with its own UID" true
     result
 
+(** Tests the UID shortening functionality with various lengths *)
 let test_shorten_uid () =
   let uid = UniqueIdentifier.generate_uid "user@example.com" in
   Printf.printf "Generated UID length: %d\n" (String.length uid);
@@ -53,6 +60,7 @@ let test_shorten_uid () =
     "Shortening UID to length greater than original should return full UID" 100
     (String.length shortened_longer)
 
+(** Validates the UID format checking functionality *)
 let test_is_valid_uid () =
   let valid_uid = UniqueIdentifier.generate_uid "user@example.com" in
   check bool "Generate UID should be valid" true
@@ -64,6 +72,7 @@ let test_is_valid_uid () =
   check bool "Empty string should be invalid UID" false
     (UniqueIdentifier.is_valid_uid empty_uid)
 
+(** Tests the functionality to combine multiple UIDs into a single UID *)
 let test_combine_uids () =
   let uid1 = UniqueIdentifier.generate_uid "user@example.com" in
   let uid2 = UniqueIdentifier.generate_uid "file_metadata" in
@@ -71,6 +80,7 @@ let test_combine_uids () =
   check bool "Combined UID should generate a non-empty UID" true
     (String.length combine_uid > 0)
 
+(** Tests generating UIDs from multiple input fields *)
 let test_generate_uid_from_multiple_fields () =
   let uid_fields =
     UniqueIdentifier.generate_uid_from_multiple_fields
