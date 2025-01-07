@@ -35,6 +35,7 @@ This repository serves as both a learning resource and a practical toolkit for O
 
 ### Key Characteristics
 - Pure functional implementations
+- Strong static typing and pattern matching
 - Comprehensive test coverage
 - Performance benchmarking
 - Cross-platform compatibility
