@@ -30,7 +30,7 @@ This repository serves as both a learning resource and a practical toolkit for O
 
 ### Development Tools
 - **Testing**: OUnit, QCheck property-based, Alcotest, Profiling
-- **Benchmarking**: Core_bench, Bechamel frameworks
+- **Benchmarking**: Core_bench, Bechamel frameworks, Benchmark
 - **CLI Tools**: Command-line utilities and examples
 
 ### Key Characteristics
