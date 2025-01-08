@@ -1,0 +1,10 @@
+(test
+ (name test_ocaml_gc_tcp_server_client)
+ (libraries
+  alcotest
+  lwt
+  ocaml_gc_tcp_server_client
+  mirage-crypto-rng
+  mirage-crypto-rng.unix
+  mirage-crypto-rng-lwt
+  ocaml_digestif_hash))
